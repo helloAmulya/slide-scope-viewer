@@ -11,7 +11,7 @@ This project is part of an **assignment** focused on building a **Whole Slide Im
 
 ## Showcase
 
-![Project Preview](public/display.png)
+![Project Preview](public/lovable-uploads/display.png)
 
 ## How to Edit the Code
 
