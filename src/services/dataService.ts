@@ -15,6 +15,22 @@ export const loadJsonFile = async (url: string): Promise<any> => {
   }
 };
 
+// Function to load a JSON file from the public folder
+export const loadJsonFromPublic = async (filename: string): Promise<any> => {
+  try {
+    // Ensure the path starts with a slash
+    const publicPath = filename.startsWith('/') ? filename : `/${filename}`;
+    const response = await fetch(publicPath);
+    if (!response.ok) {
+      throw new Error(`Failed to load JSON from public folder: ${response.statusText}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`Error loading JSON file "${filename}" from public folder:`, error);
+    throw error;
+  }
+};
+
 // Parse the output.json format into the expected app format
 export const parseOutputJson = (json: OutputJson, imagePath: string): OutputData => {
   const detectionResults = [];
@@ -50,7 +66,26 @@ export const parseOutputJson = (json: OutputJson, imagePath: string): OutputData
 
 // Get default image path for a dataset
 export const getDefaultImagePath = (dataset: OutputJson): string => {
-  // You could implement logic to determine image path based on dataset properties
-  // For now using a placeholder
+  // If the dataset includes a filename that looks like an image path, use that
+  if (dataset.filename && 
+     (dataset.filename.endsWith('.png') || 
+      dataset.filename.endsWith('.jpg') || 
+      dataset.filename.endsWith('.jpeg') || 
+      dataset.filename.endsWith('.webp'))) {
+    // Check if it's in public folder
+    return `/public/${dataset.filename}`;
+  }
+  
+  // Default fallback
   return `/lovable-uploads/c18bce35-d835-4bae-bf53-a4118b246e61.png`;
+};
+
+// Load the default output.json from public folder
+export const loadDefaultOutputJson = async (): Promise<OutputJson | null> => {
+  try {
+    return await loadJsonFromPublic('output.json');
+  } catch (error) {
+    console.error("Failed to load default output.json:", error);
+    return null;
+  }
 };

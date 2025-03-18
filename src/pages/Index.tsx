@@ -5,10 +5,16 @@ import FindingsPanel from "@/components/FindingsPanel";
 import DatasetSelector from "@/components/DatasetSelector";
 import { OutputData, Finding, OutputJson, Dataset } from "@/types";
 import { toast } from "sonner";
-import { loadJsonFile, parseOutputJson, getDefaultImagePath } from "@/services/dataService";
+import { 
+  loadJsonFile, 
+  parseOutputJson, 
+  getDefaultImagePath, 
+  loadDefaultOutputJson,
+  loadJsonFromPublic 
+} from "@/services/dataService";
 import { v4 as uuidv4 } from "uuid";
 
-// Sample data for initial state
+// Sample data for initial state if needed as fallback
 const sampleOutputJson: OutputJson = {
   "id": 19,
   "patient_id": "7",
@@ -60,35 +66,64 @@ const Index = () => {
   const [activeFindingId, setActiveFindingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize with sample data
+  // Initialize with data from public folder if available
   useEffect(() => {
     const initializeData = async () => {
       try {
         setIsLoading(true);
         
-        // Create dataset with sample data
-        const datasetId = uuidv4();
-        const imagePath = getDefaultImagePath(sampleOutputJson);
-        const parsedData = parseOutputJson(sampleOutputJson, imagePath);
+        // Try to load output.json from public folder first
+        const publicJsonData = await loadDefaultOutputJson();
         
-        const newDataset: Dataset = {
-          id: datasetId,
-          name: `Sample - ${sampleOutputJson.filename}`,
-          data: sampleOutputJson,
-          parsedData: parsedData
-        };
-        
-        setDatasets([newDataset]);
-        setActiveDatasetId(datasetId);
-        
-        // Set the first finding as active if there are any
-        const findings = generateFindings(parsedData, datasetId);
-        if (findings.length > 0) {
-          setActiveFindingId(findings[0].id);
+        if (publicJsonData) {
+          // We found output.json in the public folder
+          const datasetId = uuidv4();
+          const imagePath = getDefaultImagePath(publicJsonData);
+          const parsedData = parseOutputJson(publicJsonData, imagePath);
+          
+          const newDataset: Dataset = {
+            id: datasetId,
+            name: `Public - ${publicJsonData.filename || 'output.json'}`,
+            data: publicJsonData,
+            parsedData: parsedData
+          };
+          
+          setDatasets([newDataset]);
+          setActiveDatasetId(datasetId);
+          
+          // Set the first finding as active if there are any
+          const findings = generateFindings(parsedData, datasetId);
+          if (findings.length > 0) {
+            setActiveFindingId(findings[0].id);
+          }
+          
+          toast.success("Loaded output.json from public folder");
+        } else {
+          // Fallback to sample data if output.json not found
+          const datasetId = uuidv4();
+          const imagePath = getDefaultImagePath(sampleOutputJson);
+          const parsedData = parseOutputJson(sampleOutputJson, imagePath);
+          
+          const newDataset: Dataset = {
+            id: datasetId,
+            name: `Sample - ${sampleOutputJson.filename || 'Dataset'}`,
+            data: sampleOutputJson,
+            parsedData: parsedData
+          };
+          
+          setDatasets([newDataset]);
+          setActiveDatasetId(datasetId);
+          
+          // Set the first finding as active if there are any
+          const findings = generateFindings(parsedData, datasetId);
+          if (findings.length > 0) {
+            setActiveFindingId(findings[0].id);
+          }
+          
+          toast.success("Sample data loaded (output.json not found in public folder)");
         }
         
         setIsLoading(false);
-        toast.success("Sample data loaded successfully");
       } catch (error) {
         console.error("Error initializing data:", error);
         setIsLoading(false);
