@@ -7,17 +7,14 @@ This project is part of an **assignment** focused on building a **Whole Slide Im
 ## Project Information
 
 - **Repository**: [Slide Scope Viewer](https://github.com/helloAmulya/slide-scope-viewer)
-- **Project URL**: [Lovable Project](https://lovable.dev/projects/5dae05a1-b107-4f3b-ae70-82741dcd2711)
+- **Project URL**: [WSI Project](https://wsi-peach.vercel.app/)
 
 ## Showcase
 
 ![Project Preview](public/lovable-uploads/display.png)
 
-## How to Edit the Code
-
-### **Using Lovable**
-
-Visit the [Lovable Project](https://lovable.dev/projects/5dae05a1-b107-4f3b-ae70-82741dcd2711) and start prompting. Changes made via Lovable will be automatically committed to this repo.
+### **Image Interaction**
+The image is present in the viewer, but you need to **drag and move around** to explore different sections.
 
 ### **Using Your Preferred IDE (Locally)**
 
@@ -60,3 +57,4 @@ This project is built using:
 - **React.js** (for UI components)
 - **shadcn-ui** (for modern UI components)
 - **Tailwind CSS** (for styling)
+
