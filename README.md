@@ -1,69 +1,70 @@
-# Welcome to your Lovable project
+# Welcome to the Slide Scope Viewer Project
 
-## Project info
+## Project Overview
 
-**URL**: https://lovable.dev/projects/5dae05a1-b107-4f3b-ae70-82741dcd2711
+This project is part of an **assignment** focused on building a **Whole Slide Image Viewer** with advanced zooming and annotation capabilities.
 
-## How can I edit this code?
+## Project Information
 
-There are several ways of editing your application.
+- **Repository**: [Slide Scope Viewer](https://github.com/helloAmulya/slide-scope-viewer)
+- **Project URL**: [Lovable Project](https://lovable.dev/projects/5dae05a1-b107-4f3b-ae70-82741dcd2711)
 
-**Use Lovable**
+## Showcase
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/5dae05a1-b107-4f3b-ae70-82741dcd2711) and start prompting.
+![Project Preview](public/display.png)
 
-Changes made via Lovable will be committed automatically to this repo.
+## How to Edit the Code
 
-**Use your preferred IDE**
+### **Using Lovable**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Visit the [Lovable Project](https://lovable.dev/projects/5dae05a1-b107-4f3b-ae70-82741dcd2711) and start prompting. Changes made via Lovable will be automatically committed to this repo.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### **Using Your Preferred IDE (Locally)**
 
-Follow these steps:
+If you want to work locally using your own IDE, follow these steps:
 
+#### **Prerequisites**
+- Ensure **Node.js** and **npm** are installed. We recommend using **nvm**: [Install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+#### **Setup Steps**
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clone the repository using the project's Git URL.
+git clone https://github.com/helloAmulya/slide-scope-viewer.git
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to the project directory.
+cd slide-scope-viewer
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install the necessary dependencies.
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### **Editing Files Directly in GitHub**
+- Navigate to the file you want to modify.
+- Click the **"Edit" (pencil) button**.
+- Make changes and commit them.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### **Using GitHub Codespaces**
+- Open the repository in GitHub.
+- Click **"Code"** (green button) → **"Codespaces"** → **"New codespace"**.
+- Edit files and commit changes directly.
 
-**Use GitHub Codespaces**
+## Technologies Used
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+This project is built using:
 
-## What technologies are used for this project?
+- **Vite** (for fast development & bundling)
+- **TypeScript** (for type safety)
+- **React.js** (for UI components)
+- **shadcn-ui** (for modern UI components)
+- **Tailwind CSS** (for styling)
 
-This project is built with .
+## How to Deploy
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Open [Lovable](https://lovable.dev/projects/5dae05a1-b107-4f3b-ae70-82741dcd2711) and click on **Share → Publish**.
 
-## How can I deploy this project?
+## Custom Domain Support
 
-Simply open [Lovable](https://lovable.dev/projects/5dae05a1-b107-4f3b-ae70-82741dcd2711) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+Currently, **custom domains are not supported**. If you want to deploy under your own domain, we recommend using **Netlify**. See our guide: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/).
