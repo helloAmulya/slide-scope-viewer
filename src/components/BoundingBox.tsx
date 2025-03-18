@@ -27,19 +27,26 @@ const BoundingBox = memo(({
 
   const color = getColorForClassId(detection.class_id);
   
+  // Create className based on isHighlighted status
+  const boxClasses = `
+    bounding-box
+    absolute
+    pointer-events-none
+    border-solid
+    ${isHighlighted ? 'z-10' : 'z-0'}
+    ${isHighlighted ? 'border-[3px]' : 'border-[2px]'}
+  `;
+
   return (
     <div
-      className={`bounding-box ${isHighlighted ? 'z-10' : 'z-0'}`}
+      className={boxClasses}
       style={{
         left: `${x}px`,
         top: `${y}px`,
         width: `${width}px`,
         height: `${height}px`,
         borderColor: color,
-        backgroundColor: isHighlighted 
-          ? `${color}33` // 20% opacity
-          : `${color}1A`, // 10% opacity
-        borderWidth: isHighlighted ? '3px' : '2px',
+        backgroundColor: isHighlighted ? `${color}33` : `${color}1A`,
         boxShadow: isHighlighted ? `0 0 0 1px rgba(255,255,255,0.5), 0 0 10px ${color}66` : 'none',
       }}
     />
