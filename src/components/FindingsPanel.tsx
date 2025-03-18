@@ -30,7 +30,7 @@ const FindingsPanel = memo(({
     <div className="findings-panel w-full h-full animate-slide-up">
       <div className="p-6">
         <h2 className="text-2xl font-semibold mb-1 tracking-tight">Scopio</h2>
-        <p className="text-sm text-muted-foreground mb-4">Whole Slide Image Viewer</p>
+        <p className="text-sm text-muted-foreground mb-4">Blood Sample Analysis</p>
         <Separator className="mb-6" />
         <h3 className="text-lg font-medium mb-4">Findings ({findings.length})</h3>
       </div>
@@ -41,7 +41,9 @@ const FindingsPanel = memo(({
             <div
               key={finding.id}
               ref={finding.id === activeFindingId ? activeItemRef : null}
-              className={`findings-item cursor-pointer ${finding.id === activeFindingId ? 'active' : ''}`}
+              className={`findings-item p-4 mx-4 mb-3 rounded-md transition-all cursor-pointer hover:bg-gray-100 ${
+                finding.id === activeFindingId ? 'bg-gray-100 border-l-4 border-l-primary' : ''
+              }`}
               onClick={() => onSelectFinding(finding.id)}
             >
               <h4 className="font-medium mb-1">{finding.title}</h4>

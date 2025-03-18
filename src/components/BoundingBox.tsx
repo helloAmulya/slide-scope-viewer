@@ -25,7 +25,9 @@ const BoundingBox = memo(({
     offsetY
   );
 
-  const color = getColorForClassId(detection.class_id);
+  // Use class_id if available, otherwise use a default value
+  const classId = detection.class_id !== undefined ? detection.class_id : 0;
+  const color = getColorForClassId(classId);
   
   // Create className based on isHighlighted status
   const boxClasses = `

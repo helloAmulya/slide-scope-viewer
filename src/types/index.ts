@@ -1,8 +1,8 @@
 
 export interface DetectionResult {
   bbox: number[];
-  score: number;
-  class_id: number;
+  score?: number;
+  class_id?: number;
   class_name: string;
 }
 
@@ -16,4 +16,24 @@ export interface Finding {
   title: string;
   description: string;
   detectionIndex: number;
+}
+
+export interface OutputJson {
+  id: number;
+  patient_id: string;
+  wsi_video_url: string;
+  inference_results: {
+    delayTime: number;
+    executionTime: number;
+    id: string;
+    output: {
+      detection_results: (number | string)[][];
+    };
+    status: string;
+    workerId: string;
+  };
+  celery_status: string;
+  filename: string;
+  sample_type: string;
+  date: string;
 }
