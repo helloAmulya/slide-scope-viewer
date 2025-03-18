@@ -2,13 +2,13 @@
 import { useState, useEffect } from "react";
 import SlideViewer from "@/components/SlideViewer";
 import FindingsPanel from "@/components/FindingsPanel";
-import { OutputData, Finding, OutputJson, DetectionResult } from "@/types";
+import DatasetSelector from "@/components/DatasetSelector";
+import { OutputData, Finding, OutputJson, Dataset } from "@/types";
 import { toast } from "sonner";
+import { loadJsonFile, parseOutputJson, getDefaultImagePath } from "@/services/dataService";
+import { v4 as uuidv4 } from "uuid";
 
-// Sample slide image - will be replaced with actual data
-const placeholderImageUrl = "/lovable-uploads/c18bce35-d835-4bae-bf53-a4118b246e61.png";
-
-// Sample output.json data
+// Sample data for initial state
 const sampleOutputJson: OutputJson = {
   "id": 19,
   "patient_id": "7",
@@ -43,84 +43,127 @@ const sampleOutputJson: OutputJson = {
   "date": "2024-12-09"
 };
 
-// Function to parse the output.json format into the expected app format
-const parseOutputJson = (json: OutputJson): OutputData => {
-  const detectionResults: DetectionResult[] = [];
-  
-  if (json.inference_results?.output?.detection_results) {
-    json.inference_results.output.detection_results.forEach((detection, index) => {
-      if (Array.isArray(detection) && detection.length >= 5) {
-        const [x, y, x2, y2, className] = detection;
-        
-        if (typeof x === 'number' && typeof y === 'number' && 
-            typeof x2 === 'number' && typeof y2 === 'number' && 
-            typeof className === 'string') {
-          
-          // Convert from [x1, y1, x2, y2] to [x, y, width, height]
-          const width = x2 - x;
-          const height = y2 - y;
-          
-          detectionResults.push({
-            bbox: [x, y, width, height],
-            class_name: className,
-            class_id: index, // Using index as class_id for color mapping
-          });
-        }
-      }
-    });
-  }
-  
-  return {
-    image_path: placeholderImageUrl, // Use the placeholder for now
-    detection_results: detectionResults
-  };
-};
-
 // Generate findings based on detection results
-const generateFindings = (data: OutputData): Finding[] => {
+const generateFindings = (data: OutputData, datasetId: string): Finding[] => {
   return data.detection_results.map((detection, index) => ({
-    id: `finding-${index}`,
+    id: `finding-${index}-${datasetId}`,
     title: `${detection.class_name}`,
     description: `${detection.class_name} detected at coordinates X:${detection.bbox[0]}, Y:${detection.bbox[1]}`,
-    detectionIndex: index
+    detectionIndex: index,
+    datasetId: datasetId
   }));
 };
 
 const Index = () => {
-  const [data, setData] = useState<OutputData>({ image_path: placeholderImageUrl, detection_results: [] });
-  const [findings, setFindings] = useState<Finding[]>([]);
+  const [datasets, setDatasets] = useState<Dataset[]>([]);
+  const [activeDatasetId, setActiveDatasetId] = useState<string | null>(null);
   const [activeFindingId, setActiveFindingId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Initialize with sample data
   useEffect(() => {
-    const processData = () => {
+    const initializeData = async () => {
       try {
         setIsLoading(true);
         
-        // Parse the sample output.json
-        const parsedData = parseOutputJson(sampleOutputJson);
-        setData(parsedData);
+        // Create dataset with sample data
+        const datasetId = uuidv4();
+        const imagePath = getDefaultImagePath(sampleOutputJson);
+        const parsedData = parseOutputJson(sampleOutputJson, imagePath);
         
-        // Generate findings based on the parsed data
-        const generatedFindings = generateFindings(parsedData);
-        setFindings(generatedFindings);
+        const newDataset: Dataset = {
+          id: datasetId,
+          name: `Sample - ${sampleOutputJson.filename}`,
+          data: sampleOutputJson,
+          parsedData: parsedData
+        };
+        
+        setDatasets([newDataset]);
+        setActiveDatasetId(datasetId);
         
         // Set the first finding as active if there are any
-        if (generatedFindings.length > 0) {
-          setActiveFindingId(generatedFindings[0].id);
+        const findings = generateFindings(parsedData, datasetId);
+        if (findings.length > 0) {
+          setActiveFindingId(findings[0].id);
         }
         
         setIsLoading(false);
-        toast.success("Slide image loaded successfully");
+        toast.success("Sample data loaded successfully");
       } catch (error) {
-        console.error("Error processing data:", error);
+        console.error("Error initializing data:", error);
         setIsLoading(false);
-        toast.error("Failed to process slide data");
+        toast.error("Failed to initialize data");
       }
     };
     
-    processData();
+    initializeData();
   }, []);
+
+  // Handle loading a JSON file
+  const handleLoadFile = async (file: File) => {
+    try {
+      // Read the file content
+      const text = await file.text();
+      const jsonData = JSON.parse(text) as OutputJson;
+      
+      // Create a new dataset
+      const datasetId = uuidv4();
+      const imagePath = getDefaultImagePath(jsonData);
+      const parsedData = parseOutputJson(jsonData, imagePath);
+      
+      const newDataset: Dataset = {
+        id: datasetId,
+        name: jsonData.filename || `Dataset ${datasets.length + 1}`,
+        data: jsonData,
+        parsedData: parsedData
+      };
+      
+      // Add the new dataset to the list and select it
+      setDatasets(prev => [...prev, newDataset]);
+      setActiveDatasetId(datasetId);
+      
+      // Set the first finding as active if there are any
+      const findings = generateFindings(parsedData, datasetId);
+      if (findings.length > 0) {
+        setActiveFindingId(findings[0].id);
+      }
+      
+      toast.success(`Loaded dataset: ${newDataset.name}`);
+    } catch (error) {
+      console.error("Error loading JSON file:", error);
+      toast.error("Invalid JSON file format");
+    }
+  };
+
+  // Get the active dataset and its data
+  const activeDataset = activeDatasetId 
+    ? datasets.find(d => d.id === activeDatasetId) 
+    : null;
+  
+  const activeData = activeDataset?.parsedData || { 
+    image_path: "", 
+    detection_results: [] 
+  };
+  
+  // Generate findings for the active dataset
+  const findings = activeDataset?.parsedData 
+    ? generateFindings(activeDataset.parsedData, activeDataset.id) 
+    : [];
+
+  const handleSelectDataset = (datasetId: string) => {
+    setActiveDatasetId(datasetId);
+    
+    // Update active finding for the new dataset
+    const dataset = datasets.find(d => d.id === datasetId);
+    if (dataset?.parsedData) {
+      const datasetFindings = generateFindings(dataset.parsedData, datasetId);
+      if (datasetFindings.length > 0) {
+        setActiveFindingId(datasetFindings[0].id);
+      } else {
+        setActiveFindingId(null);
+      }
+    }
+  };
 
   const handleSelectFinding = (findingId: string) => {
     setActiveFindingId(findingId);
@@ -129,19 +172,39 @@ const Index = () => {
   return (
     <div className="grid grid-cols-[300px_1fr] h-screen w-full overflow-hidden bg-white">
       {/* Left panel - Findings */}
-      <FindingsPanel 
-        findings={findings} 
-        activeFindingId={activeFindingId} 
-        onSelectFinding={handleSelectFinding} 
-      />
+      <div className="flex flex-col h-full border-r">
+        <FindingsPanel 
+          findings={findings} 
+          activeFindingId={activeFindingId} 
+          onSelectFinding={handleSelectFinding} 
+        />
+        
+        <div className="mt-auto border-t p-2">
+          <DatasetSelector 
+            datasets={datasets}
+            activeDatasetId={activeDatasetId}
+            onSelectDataset={handleSelectDataset}
+            onLoadFile={handleLoadFile}
+          />
+        </div>
+      </div>
       
       {/* Main content - Slide viewer */}
       <SlideViewer 
-        imageUrl={data.image_path} 
-        detections={data.detection_results}
+        imageUrl={activeData.image_path} 
+        detections={activeData.detection_results}
         activeFindingId={activeFindingId}
         findings={findings}
       />
+      
+      {isLoading && (
+        <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-50">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+            <p className="text-foreground font-medium">Loading data...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -16,6 +16,7 @@ export interface Finding {
   title: string;
   description: string;
   detectionIndex: number;
+  datasetId?: string; // Added to identify which dataset a finding belongs to
 }
 
 export interface OutputJson {
@@ -36,4 +37,12 @@ export interface OutputJson {
   filename: string;
   sample_type: string;
   date: string;
+}
+
+// New type for managing multiple datasets
+export interface Dataset {
+  id: string;
+  name: string;
+  data: OutputJson;
+  parsedData?: OutputData;
 }
