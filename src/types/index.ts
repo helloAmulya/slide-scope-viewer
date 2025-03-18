@@ -16,7 +16,7 @@ export interface Finding {
   title: string;
   description: string;
   detectionIndex: number;
-  datasetId?: string; // Added to identify which dataset a finding belongs to
+  datasetId?: string; 
 }
 
 export interface OutputJson {

@@ -1,7 +1,6 @@
 
 import { OutputJson, OutputData, Dataset } from "@/types";
 
-// Function to load JSON file from a URL
 export const loadJsonFile = async (url: string): Promise<any> => {
   try {
     const response = await fetch(url);
@@ -35,7 +34,7 @@ export const parseOutputJson = (json: OutputJson, imagePath: string): OutputData
           detectionResults.push({
             bbox: [x, y, width, height],
             class_name: className,
-            class_id: index, // Using index as class_id for color mapping
+            class_id: index, 
           });
         }
       }
@@ -48,9 +47,7 @@ export const parseOutputJson = (json: OutputJson, imagePath: string): OutputData
   };
 };
 
-// Get default image path for a dataset
 export const getDefaultImagePath = (dataset: OutputJson): string => {
-  // You could implement logic to determine image path based on dataset properties
-  // For now using a placeholder
-  return `/lovable-uploads/c18bce35-d835-4bae-bf53-a4118b246e61.png`;
+
+  return `/lovable-uploads/WSImage.png`;
 };

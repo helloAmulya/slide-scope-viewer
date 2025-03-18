@@ -29,7 +29,7 @@ const FindingsPanel = memo(({
   return (
     <div className="findings-panel w-full h-full animate-slide-up">
       <div className="p-6">
-        <h2 className="text-2xl font-semibold mb-1 tracking-tight">Scopio</h2>
+        <h2 className="text-2xl font-semibold mb-1 tracking-tight">Artigence AI</h2>
         <p className="text-sm text-muted-foreground mb-4">Blood Sample Analysis</p>
         <Separator className="mb-6" />
         <h3 className="text-lg font-medium mb-4">Findings ({findings.length})</h3>
